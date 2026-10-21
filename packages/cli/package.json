@@ -1,0 +1,48 @@
+{
+  "name": "testlie",
+  "version": "0.1.0",
+  "description": "Testlie command-line tool: create disposable email inboxes, wait for an email and print its one-time code or magic link, from any shell or CI job",
+  "license": "MIT",
+  "author": "Carrier Grade Inc. (https://testlie.com)",
+  "homepage": "https://testlie.com/docs/sdks#cli",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carriergrade/testlie-sdk.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/carriergrade/testlie-sdk/issues"
+  },
+  "keywords": [
+    "testlie",
+    "cli",
+    "email-testing",
+    "otp",
+    "magic-link",
+    "disposable-inbox",
+    "e2e",
+    "ci"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "bin",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "bin": {
+    "testlie": "./bin/testlie.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "smoke": "node bin/testlie.js --version"
+  },
+  "dependencies": {
+    "@testlie/sdk": "0.1.0"
+  }
+}

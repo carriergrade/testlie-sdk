@@ -1,0 +1,87 @@
+# Release @testlie/sdk and the `testlie` CLI wrapper to npm. Tag: node-v<version>.
+#
+# The same file lives in the private repo and, exported by scripts/release/split-public.sh, in
+# the public SDK repo (scripts/release/public.env):
+#   - private repo: `sync` exports packages/ to the public repo and pushes the same tag there;
+#   - public repo:  `publish` builds, tests and publishes with npm provenance, which npm only
+#     accepts from a public source repository.
+# Secrets: RELEASE_APP_ID and RELEASE_APP_KEY (private repo), NPM_TOKEN (public repo, environment `npm`; not
+# needed once npm trusted publishing is configured).
+name: Release npm
+
+on:
+  push:
+    tags: ["node-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: github.event.repository.private
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency: public-sync-sdk
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/release/check.sh tag "$GITHUB_REF_NAME"
+      # Pushes and tags as the org's release app, so no person appears on the public repo.
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_KEY }}
+          owner: carriergrade
+          repositories: testlie-sdk
+      - run: scripts/release/push-public.sh sdk "$GITHUB_REF_NAME"
+        env:
+          PUBLIC_REPOS_TOKEN: ${{ steps.app.outputs.token }}
+
+  publish:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write # npm provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      # npm 11.5.1+ also supports npm trusted publishing (OIDC): once it is configured for both
+      # packages on npmjs.com, publishing works without NPM_TOKEN.
+      - run: npm install -g npm@^11.5.1
+      - run: scripts/release/check.sh tag "$GITHUB_REF_NAME"
+      - name: Build and test @testlie/sdk
+        working-directory: packages/sdk-node
+        run: |
+          npm ci
+          npm run typecheck
+          npm test
+          npm run build
+          npm run smoke
+      - name: Publish @testlie/sdk
+        working-directory: packages/sdk-node
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          v=$(node -p 'require("./package.json").version')
+          if npm view "@testlie/sdk@$v" version 2>/dev/null | grep -q .; then
+            echo "@testlie/sdk@$v is already on npm"
+          else
+            npm publish --provenance --access public --ignore-scripts
+          fi
+      - name: Publish testlie (CLI wrapper)
+        working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          v=$(node -p 'require("./package.json").version')
+          if npm view "testlie@$v" version 2>/dev/null | grep -q .; then
+            echo "testlie@$v is already on npm"
+          else
+            npm publish --provenance --access public
+          fi

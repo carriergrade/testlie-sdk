@@ -1,0 +1,76 @@
+# Release the `testlie` Python package to PyPI. Tag: python-v<version>.
+#
+# The same file lives in the private repo and, exported by scripts/release/split-public.sh, in
+# the public SDK repo (scripts/release/public.env):
+#   - private repo: `sync` exports packages/ to the public repo and pushes the same tag there;
+#   - public repo:  `publish` tests, builds and uploads with PyPI trusted publishing (OIDC; the
+#     trusted publisher is this repo, workflow release-pypi.yml, environment pypi), falling back
+#     to the PYPI_API_TOKEN secret when trusted publishing is not set up.
+# Secrets: RELEASE_APP_ID and RELEASE_APP_KEY (private repo); PYPI_API_TOKEN only for the fallback (public repo).
+name: Release PyPI
+
+on:
+  push:
+    tags: ["python-v*"]
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    if: github.event.repository.private
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency: public-sync-sdk
+    steps:
+      - uses: actions/checkout@v4
+      - run: scripts/release/check.sh tag "$GITHUB_REF_NAME"
+      # Pushes and tags as the org's release app, so no person appears on the public repo.
+      - id: app
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.RELEASE_APP_ID }}
+          private-key: ${{ secrets.RELEASE_APP_KEY }}
+          owner: carriergrade
+          repositories: testlie-sdk
+      - run: scripts/release/push-public.sh sdk "$GITHUB_REF_NAME"
+        env:
+          PUBLIC_REPOS_TOKEN: ${{ steps.app.outputs.token }}
+
+  publish:
+    if: ${{ !github.event.repository.private }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: pypi
+      url: https://pypi.org/project/testlie/
+    permissions:
+      contents: read
+      id-token: write # trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: scripts/release/check.sh tag "$GITHUB_REF_NAME"
+      - name: Test and build
+        working-directory: packages/sdk-python
+        run: |
+          python -m pip install --upgrade pip build twine pytest
+          python -m pytest
+          python -m build --outdir "$GITHUB_WORKSPACE/dist"
+          python -m twine check --strict "$GITHUB_WORKSPACE"/dist/*
+      - name: Publish (trusted publishing)
+        id: oidc
+        continue-on-error: true
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+          skip-existing: true
+      - name: Publish (PYPI_API_TOKEN fallback)
+        if: steps.oidc.outcome == 'failure'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: dist/
+          skip-existing: true
+          password: ${{ secrets.PYPI_API_TOKEN }}

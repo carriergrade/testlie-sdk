@@ -1,0 +1,94 @@
+{
+  "name": "@testlie/sdk",
+  "version": "0.1.0",
+  "description": "Testlie SDK and CLI: disposable email inboxes, wait-for-email, OTP and magic-link extraction for end-to-end tests, with Playwright and Cypress helpers",
+  "license": "MIT",
+  "author": "Carrier Grade Inc. (https://testlie.com)",
+  "homepage": "https://testlie.com/docs/sdks",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carriergrade/testlie-sdk.git",
+    "directory": "packages/sdk-node"
+  },
+  "bugs": {
+    "url": "https://github.com/carriergrade/testlie-sdk/issues"
+  },
+  "keywords": [
+    "testlie",
+    "email-testing",
+    "email",
+    "smtp",
+    "otp",
+    "magic-link",
+    "disposable-inbox",
+    "playwright",
+    "cypress",
+    "e2e",
+    "testing",
+    "ci"
+  ],
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./playwright": {
+      "types": "./dist/playwright.d.ts",
+      "import": "./dist/playwright.js"
+    },
+    "./cypress": {
+      "types": "./dist/cypress.d.ts",
+      "import": "./dist/cypress.js"
+    },
+    "./cypress/support": {
+      "types": "./dist/cypress-support.d.ts",
+      "import": "./dist/cypress-support.js"
+    },
+    "./cli": {
+      "types": "./dist/cli.d.ts",
+      "import": "./dist/cli.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "testlie": "./dist/cli.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+    "build": "npm run clean && tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "smoke": "node dist/cli.js --version && node dist/cli.js --help > /dev/null",
+    "prepublishOnly": "npm run build && npm test && npm run smoke"
+  },
+  "peerDependencies": {
+    "@playwright/test": ">=1.30"
+  },
+  "peerDependenciesMeta": {
+    "@playwright/test": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.48.0",
+    "@types/node": "^20.11.0",
+    "typescript": "^5.4.0",
+    "vitest": "^4.1.11"
+  }
+}
