@@ -1,6 +1,6 @@
 {
-  "name": "testlie",
-  "version": "0.1.1",
+  "name": "@testlie/cli",
+  "version": "0.1.2",
   "description": "Testlie command-line tool: create disposable email inboxes, wait for an email and print its one-time code or magic link, from any shell or CI job",
   "license": "MIT",
   "author": "Carrier Grade Inc. (https://testlie.com)",
@@ -43,6 +43,6 @@
     "smoke": "node bin/testlie.js --version"
   },
   "dependencies": {
-    "@testlie/sdk": "0.1.1"
+    "@testlie/sdk": "0.1.2"
   }
 }

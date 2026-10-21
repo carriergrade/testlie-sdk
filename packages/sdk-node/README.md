@@ -13,7 +13,7 @@ type declarations.
 ```bash
 npm install --save-dev @testlie/sdk
 export TESTLIE_API_KEY=tl_...                # a read-only key can wait and extract
-# export TESTLIE_URL=https://testlie.example  # only for a self-hosted server
+# export TESTLIE_URL=https://testlie.example  # only to use another server
 ```
 
 3. Try it without writing any code: create an inbox, send it a sample email, read the code back.
@@ -161,9 +161,9 @@ commands take a message argument or chain from `testlieWaitForEmail`.
 
 ## CLI
 
-The `testlie` command is installed with this package. Outside a Node project, `npx testlie ...`
-runs the same CLI from the [`testlie`](https://www.npmjs.com/package/testlie) package, a thin
-wrapper pinned to the same version. `testlie --version` prints the version.
+The `testlie` command is installed with this package. Outside a Node project, `npx @testlie/cli ...`
+runs the same CLI from the [`@testlie/cli`](https://www.npmjs.com/package/@testlie/cli) package, a
+thin wrapper pinned to the same version. `testlie --version` prints the version.
 
 ```bash
 npx testlie inboxes create --disposable 30 --name "CI run $GITHUB_RUN_ID"

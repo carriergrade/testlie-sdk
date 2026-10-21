@@ -12,7 +12,7 @@ only (`urllib`), Python 3.9+, typed, with a pytest plugin.
 ```bash
 pip install testlie
 export TESTLIE_API_KEY=tl_...                # a read-only key can wait and extract
-# export TESTLIE_URL=https://testlie.example  # only for a self-hosted server
+# export TESTLIE_URL=https://testlie.example  # only to use another server
 ```
 
 3. Use it in a test:

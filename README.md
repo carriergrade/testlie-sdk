@@ -8,7 +8,7 @@ code or magic link, without writing HTTP calls or regexes by hand.
 | Package | Install | Source |
 |---|---|---|
 | Node.js SDK, Playwright and Cypress helpers, `testlie` CLI | `npm install --save-dev @testlie/sdk` | [`packages/sdk-node`](packages/sdk-node) |
-| CLI only (`npx testlie ...`) | `npx testlie --version` | [`packages/cli`](packages/cli) |
+| CLI only, no Node project | `npx @testlie/cli --version` | [`packages/cli`](packages/cli) |
 | Python client and pytest plugin | `pip install testlie` | [`packages/sdk-python`](packages/sdk-python) |
 | Go client | `go get github.com/carriergrade/testlie-go` | [carriergrade/testlie-go](https://github.com/carriergrade/testlie-go) |
 | GitHub Action | `uses: carriergrade/testlie-action@v1` | [carriergrade/testlie-action](https://github.com/carriergrade/testlie-action) |
@@ -20,9 +20,9 @@ code or magic link, without writing HTTP calls or regexes by hand.
 
 ```bash
 export TESTLIE_API_KEY=tl_...
-INBOX=$(npx testlie inboxes create --disposable 10 --json | jq -r .id)
-npx testlie send-test --inbox "$INBOX"                               # a sample verification email
-npx testlie wait --inbox "$INBOX" --subject code --since 5m --otp    # prints the one-time code
+INBOX=$(npx @testlie/cli inboxes create --disposable 10 --json | jq -r .id)
+npx @testlie/cli send-test --inbox "$INBOX"                               # a sample verification email
+npx @testlie/cli wait --inbox "$INBOX" --subject code --since 5m --otp    # prints the one-time code
 ```
 
 Each package's README has its own quick start. Full documentation: https://testlie.com/docs/sdks.

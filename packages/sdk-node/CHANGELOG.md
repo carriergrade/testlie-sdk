@@ -6,6 +6,12 @@ All notable changes to this package are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-21
+
+### Changed
+
+- The README points to `npx @testlie/cli` for the CLI outside a Node project. No code changes.
+
 ## [0.1.1] - 2026-10-21
 
 ### Fixed

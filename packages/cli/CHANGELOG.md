@@ -6,6 +6,13 @@ All notable changes to this package are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-21
+
+### Changed
+
+- Published as `@testlie/cli` (`npx @testlie/cli ...`): npm does not allow the unscoped name
+  `testlie`. The command it installs is still `testlie`. 0.1.0 and 0.1.1 were never published.
+
 ## [0.1.1] - 2026-10-21
 
 ### Fixed

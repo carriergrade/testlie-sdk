@@ -74,14 +74,14 @@ jobs:
           else
             npm publish --provenance --access public --ignore-scripts
           fi
-      - name: Publish testlie (CLI wrapper)
+      - name: Publish @testlie/cli (CLI wrapper)
         working-directory: packages/cli
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           v=$(node -p 'require("./package.json").version')
-          if npm view "testlie@$v" version 2>/dev/null | grep -q .; then
-            echo "testlie@$v is already on npm"
+          if npm view "@testlie/cli@$v" version 2>/dev/null | grep -q .; then
+            echo "@testlie/cli@$v is already on npm"
           else
             npm publish --provenance --access public
           fi

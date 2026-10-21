@@ -16,7 +16,7 @@ import type {
   WebhookEvent,
 } from "./types.js";
 
-export const VERSION = "0.1.1";
+export const VERSION = "0.1.2";
 export const DEFAULT_BASE_URL = "https://testlie.com";
 /** The API holds a long-poll open for at most this long; longer waits are split into several. */
 const MAX_POLL_SECONDS = 120;
