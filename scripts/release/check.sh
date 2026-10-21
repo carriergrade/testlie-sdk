@@ -73,6 +73,13 @@ done
 if have action/CHANGELOG.md; then
   action_v=$(sed -n 's/^## \[\([0-9][^]]*\)\].*/\1/p' action/CHANGELOG.md | head -1)
 fi
+# npm 11 drops a "bin" entry whose path starts with "./" when publishing (the command goes missing).
+for pkg in packages/sdk-node/package.json packages/cli/package.json; do
+  have "$pkg" || continue
+  bad=$(node -e 'const b=require(process.argv[1]).bin||{}; console.log(Object.entries(b).filter(([,v])=>v.startsWith("./")).map(([k])=>k).join(" "))' "./$pkg")
+  [ -z "$bad" ] || err "$pkg bin path starts with ./ ($bad); npm 11 removes it on publish"
+done
+
 changelog_has() { have "$1" || return 0; grep -q "^## \[$2\]" "$1" || err "$1 has no '## [$2]' section"; }
 [ -z "$node_v" ] || { changelog_has packages/sdk-node/CHANGELOG.md "$node_v"; changelog_has packages/cli/CHANGELOG.md "$node_v"; }
 [ -z "$py_v" ] || changelog_has packages/sdk-python/CHANGELOG.md "$py_v"
