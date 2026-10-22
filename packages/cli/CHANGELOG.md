@@ -6,6 +6,10 @@ All notable changes to this package are documented here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-22
+
+Maintenance release with no functional changes.
+
 ## [0.1.2] - 2026-10-21
 
 ### Changed

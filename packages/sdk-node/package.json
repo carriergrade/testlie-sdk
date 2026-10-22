@@ -1,6 +1,6 @@
 {
   "name": "@testlie/sdk",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Testlie SDK and CLI: disposable email inboxes, wait-for-email, OTP and magic-link extraction for end-to-end tests, with Playwright and Cypress helpers",
   "license": "MIT",
   "author": "Carrier Grade Inc. (https://testlie.com)",
